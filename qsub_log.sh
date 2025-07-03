@@ -32,9 +32,9 @@ if [[ $(basename "$PWD") != "qsub_log" ]]; then
     exit 1
 fi
 
-# Обработка всех файлов в текущей директории
-for file in *; do
-    find_percent "$file" &
+# Обработка только файлов, заканчивающихся на .core, .core0, .core1 и т.д.
+for file in *.core*; do
+    [[ -f "$file" ]] && find_percent "$file" &
 done
 
 wait
