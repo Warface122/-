@@ -1,10 +1,8 @@
-#!/bin/bash
-
-USERNAME=$(whoami)
-
 find_percent() {
     local file="$1"
-    SERVER=$(basename "$file" | awk -F'_' '{for (i=1; i<=NF; i++) if ($i ~ /\.com$/) print $i}')
+
+    # Извлекаем имя сервера: всё после второго "_" до ".com"
+    SERVER=$(echo "$file" | awk -F'_' '{print $3}' | grep -o '[^_]*\.com')
 
     if [[ -z "$SERVER" ]]; then
         echo "⚠️ Не удалось извлечь имя сервера из файла: $file"
@@ -24,16 +22,3 @@ find_percent() {
         fi
     done
 }
-
-# Проверка, что скрипт запущен из папки qsub_log
-if [[ $(basename "$PWD") != "qsub_log" ]]; then
-    echo "❌ Запусти скрипт из папки qsub_log!"
-    exit 1
-fi
-
-# Обработка всех файлов в текущей директории
-for file in *; do
-    find_percent "$file" &
-done
-
-wait
