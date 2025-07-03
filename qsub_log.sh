@@ -2,15 +2,11 @@
 
 USERNAME=$(whoami)
 
-find_percent() {
+open_log() {
     local file="$1"
     SERVER=$(basename "$file" | awk -F'_' '{print $3}' | sed -E 's/(.*\.com).*/\1/')
 
-    ssh "$SERVER" "find /SCRATCH/$USERNAME/ -type f \( -name '*.log' -o -name '*.log0' \)" 2>/dev/null | while read -r log_file; do
-        scp "$SERVER:$log_file" /tmp/ > /dev/null
-        last_percent=$(grep '%' /tmp/$(basename "$log_file") | tail -n 1)
-        echo "[$SERVER] $last_percent"
-    done
+    ssh "$SERVER" "find /SCRATCH/$USERNAME/ -type f -name '*.log' | head -n 1 | xargs less"
 }
 
 if [[ $(basename "$PWD") != "qsub_log" ]]; then
@@ -19,7 +15,7 @@ if [[ $(basename "$PWD") != "qsub_log" ]]; then
 fi
 
 for file in *; do
-    find_percent "$file" &
+    open_log "$file" &
 done
 
 wait
