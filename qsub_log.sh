@@ -20,7 +20,8 @@ find_percent() {
         scp "$SERVER:$log_file" /tmp/ > /dev/null
 
         echo "🔎 Ищу последнюю строку с %..."
-        last_percent=$(grep -o '%.*' /tmp/$(basename "$log_file") | tail -n 1)
+        #last_percent=$(grep -o '%.*' /tmp/$(basename "$log_file") | tail -n 1)
+        last_percent=$(grep '%' /tmp/$(basename "$log_file") | tail -n 1)
 
         echo "✅ [$SERVER] $log_file → $last_percent"
     done
