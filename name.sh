@@ -1,21 +1,28 @@
 #!/bin/bash
 
-# Список папок
-folders=("project1" "project2" "project3")
+# Путь к папке, где находятся все указанные папки
+base_path="/your/base/path"  # ЗАМЕНИТЕ на ваш путь
 
-# Базовый путь к проектам
-base_path="/home/user/projects"
-
-# Расширение файлов
-file_ext="xlsx"
+# Путь к файлу со списком папок
+folders_file="folders.txt"
 
 # Базовая папка для загрузки
 downloads_base="$HOME/Downloads"
 
+# Расширение файлов
+file_ext="xlsx"
+
 # Счётчик для папок
 counter=1
 
-for folder in "${folders[@]}"; do
+# Проверка наличия файла со списком папок
+if [ ! -f "$folders_file" ]; then
+    echo "❌ Файл $folders_file не найден!"
+    exit 1
+fi
+
+# Чтение каждой строки из файла
+while IFS= read -r folder; do
     report_path="$base_path/$folder/report"
     target_folder="$downloads_base/folder$counter"
 
@@ -33,6 +40,6 @@ for folder in "${folders[@]}"; do
     fi
 
     ((counter++))
-done
+done < "$folders_file"
 
 echo "✅ Все файлы скопированы в папки folder1, folder2 и т.д. в ~/Downloads"
