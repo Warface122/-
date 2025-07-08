@@ -23,7 +23,7 @@ fi
 
 # Чтение каждой строки из файла
 while IFS= read -r folder; do
-    report_path="$base_path/$folder/report"
+    report_path=$(find "$base_path/$folder" -type d -iname "report" | head -n 1)
     target_folder="$downloads_base/folder$counter"
 
     if [ -d "$report_path" ]; then
