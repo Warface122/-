@@ -1,45 +1,32 @@
 #!/bin/bash
 
-# Путь к папке, где находятся все указанные папки
-base_path="/your/base/path"  # ЗАМЕНИТЕ на ваш путь
+# Путь к базовой директории, где находятся папки
+base_path="/your/base/path"
 
 # Путь к файлу со списком папок
 folders_file="folders.txt"
 
-# Базовая папка для загрузки
+# Базовая директория для сохранения
 downloads_base="$HOME/Downloads"
 
-# Расширение файлов
-file_ext="xlsx"
-
-# Счётчик для папок
+# Счётчик для папок folder1, folder2, ...
 counter=1
 
-# Проверка наличия файла со списком папок
-if [ ! -f "$folders_file" ]; then
-    echo "❌ Файл $folders_file не найден!"
-    exit 1
-fi
-
-# Чтение каждой строки из файла
+# Чтение списка папок из файла
 while IFS= read -r folder; do
-    report_path=$(find "$base_path/$folder" -type d -iname "report" | head -n 1)
+    # Путь к папке report (предполагаем, что она существует)
+    report_path="$base_path/$folder/report"
+
+    # Целевая папка для копирования
     target_folder="$downloads_base/folder$counter"
+    mkdir -p "$target_folder"
 
-    if [ -d "$report_path" ]; then
-        echo "📁 Создаю папку: $target_folder"
-        mkdir -p "$target_folder"
+    echo "📁 Копирую .xlsx файлы из $report_path → $target_folder"
 
-        echo "🔍 Ищу .${file_ext} в $report_path"
-        find "$report_path" -type f -name "*.${file_ext}" | while read -r file; do
-            echo "⬇️ Копирую: $file → $target_folder"
-            cp "$file" "$target_folder/"
-        done
-    else
-        echo "⚠️ Папка report не найдена в $folder"
-    fi
+    # Копирование всех .xlsx и .XLSX файлов
+    find "$report_path" -type f \( -iname "*.xlsx" -o -iname "*.XLSX" \) -exec cp {} "$target_folder/" \;
 
     ((counter++))
 done < "$folders_file"
 
-echo "✅ Все файлы скопированы в папки folder1, folder2 и т.д. в ~/Downloads"
+echo "✅ Готово: все файлы скопированы."
